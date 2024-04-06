@@ -51,15 +51,23 @@ def load_user(id):
 @app.route('/login/', methods = ['GET', 'POST'])
 def login():
     if g.user is not None and g.user.is_authenticated:
+        flash('login successed')
         return redirect(url_for('index'))
     form = LoginForm()
     if form.validate_on_submit():
-        login_user(g.user)
+        print(f"USER VALIDATE SuCCESSfull   active:{g.user.is_active}")
 
-    return render_template('login.html', 
-        title = 'Sign In',
-        form = form)
-
+        user = User.query.filter_by(user=form.user.data).first()
+        if user is None or not user.password == form.password.data:
+            flash('Invalid username or password')
+            return redirect(url_for('login'))
+        else:
+            flash('login successed')
+            login_user(user, remember=True)
+            return redirect(url_for('index'))
+    else:
+        return redirect(url_for('login'))
+					
 @app.route('/logout/')
 def logout():
     logout_user()
