@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block title %}Index!{% endblock %}
+
+{% block main_content %}
+
+{% if selected_questions|length == 0 %}
+    <div style="text-align: center;">
+        <h2>请等待老师发送题目</h2>
+    </div>
+{% else %}
+<div style="text-align: center;">
+    <h2>请开始答题共{{ selected_questions|length }}道题</h2>
+</div>
+<form id="quizForm">
+    {% for selected_question in selected_questions %}
+        <h3>{{ loop.index }}. {{ selected_question.title }}</h3>
+        <div class="question" id="question_{{ selected_question.id }}">
+            {% for key, value in selected_question.candidate_answers.items() %}
+                <input type="radio" id="{{ key }}" name="answer_{{ selected_question.id }}" value="{{ key }}">
+                <label for="{{ key }}">{{ key }}: {{ value }}</label><br>
+            {% endfor %}
+        </div>
+        <hr style="border: none; border-top: 3px solid #d6d6d6;">
+    {% endfor %}
+    <div style="text-align: center;">
+        <button type="submit">提交</button>
+    </div>
+</form>
+{% endif %}
+
+{% block extra_js %}
+<script>
+    var selected_questions = JSON.parse('{{ selected_questions|tojson|safe }}');
+   
+
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('quizForm').addEventListener('submit', function(e) {
+            var questions = document.getElementsByClassName('question');
+            var unansweredQuestions = [];
+
+            var score = 0;
+            var userAnswers = {};
+            
+            for (var i = 0; i < questions.length; i++) {
+ 
+                if (!questions[i].querySelector('input[type="radio"]:checked')) {
+                    unansweredQuestions.push(i+1);
+                }else{
+                    var correctAnswer = selected_questions[i].correct_answer;
+                    var selectedOption = questions[i].querySelector('input[type="radio"]:checked');
+                    if (selectedOption.value == correctAnswer) {
+                        score++;
+                    }
+                    // Save the user's answer
+                    userAnswers[selected_questions[i].id] = selectedOption.value;
+                }
+
+            }
+            if (unansweredQuestions.length > 0) {
+                e.preventDefault();
+                alert('以下问题未回答: ' + unansweredQuestions.join(', '));
+            } else {
+                // alert('所有问题均已回答');
+                e.preventDefault();
+                
+                var grade = score / questions.length * 100;  // Calculate the grade as a percentage
+                // alert('所有问题均已回答，你的成绩是:' + grade);
+                 
+
+                 // Submit the user name, grade, and user's answers
+                var xhr = new XMLHttpRequest();
+
+                                
+                xhr.addEventListener('load', function() {
+                    if (xhr.status >= 200 && xhr.status < 300) {
+                        console.log('The request was successful!', xhr.responseText);
+                    } else {
+                        console.log('The request failed!');
+                    }
+                });
+
+                xhr.addEventListener('error', function() {
+                    console.log('There was an error!');
+                });
+
+                xhr.addEventListener('progress', function(event) {
+                    if (event.lengthComputable) {
+                        var percentComplete = event.loaded / event.total * 100;
+                        console.log(percentComplete + '% complete');
+                    } else {
+                        console.log('Length computable is false');
+                    }
+                });
+
+                xhr.open('POST', '/submit', true);  // Assuming you have a '/submit' endpoint on your server
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                // xhr.send()
+                xhr.send(JSON.stringify({
+                    // userName: userName,
+                    'grade': grade,
+                    'userAnswers': userAnswers
+                }));
+                
+                alert('所有问题均已回答，你的成绩是:' + grade);
+
+
+
+
+            }
+        });
+    });
+     
+    </script>
+{% endblock %}
+
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <div class="alert alert-info">
+      {{ messages[0] }}
+    </div>
+  {% endif %}
+{% endwith %}
+
+
+{% endblock %}
+

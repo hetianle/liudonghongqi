@@ -2,15 +2,67 @@ from flask import url_for, redirect, render_template, flash, g, session
 from flask_login import login_user, logout_user, current_user, login_required
 from app import app, lm
 from app.forms import ExampleForm, LoginForm
-from app.models import User, Question, SelectedQuestion
+from app.models import User, Question, SelectedQuestion, Grade
 from flask import request
-from utils.crud import query_all_users, query_all_questions, insert_init_questions, query_questions_by_ids, query_all_selected_questions, clear_all_selected_questions
+from utils.crud import  query_all_questions,  query_questions_by_ids, query_all_selected_questions, clear_all_selected_questions
 from app import db
 from flask import jsonify
 
+@app.route('/leaderboard')
+def leaderboard():
+    grades = Grade.query.order_by(Grade.grade.desc()).all()
+    return render_template('leaderboard.html', grades=grades)
+
 @app.route('/')
 def index():
-	return render_template('index.html')
+    if g.user is not None and g.user.is_authenticated:
+        # flash('login successed')
+        if g.user.identity == '老师':
+            return render_template('index.html')
+        else:
+            selected_questions_id = SelectedQuestion.query.all()
+            
+
+            selected_questions_id = [sid.question_id for sid in selected_questions_id]
+
+            print(f"Student got: {len(selected_questions_id)} questions. {selected_questions_id}")
+
+            selected_questions = query_questions_by_ids(selected_questions_id)
+
+            return render_template('index_stu.html', selected_questions=selected_questions)
+    else:
+        return redirect(url_for('login'))
+
+@app.route('/submit', methods=['POST'])
+def submit():
+    print(f'------------------- student submit----------------')
+    data = request.get_json(force=True)
+    print(f'------------------- student submit parse complete ----------------')
+    answers = data['userAnswers']
+    grade =data['grade']
+    # print(f'username:{g.user.user} grade:{grade} answers:{answers}')
+    # submited_grades = Grade.query.all()
+    # for grade_ins in submited_grades:
+    submited_temp_user = Grade.query.filter_by(user=g.user.user).all()
+    if len(submited_temp_user) > 0:
+        flash('已经提交过了')
+        print('已经提交过了')
+        return redirect(url_for('index'))
+    else:
+        temp_user_grade = Grade(user=g.user.user, grade=grade)
+        db.session.add(temp_user_grade)
+        db.session.commit()
+        submited_temp_user = Grade.query.filter_by(user=g.user.user).all()
+        if len(submited_temp_user) > 0: 
+            flash('提交成功')
+            print('提交成功')
+        else:
+            flash('提交失败')
+            print('提交失败')
+        return redirect(url_for('index'))
+
+         
+    # return redirect(url_for('index'))
 
 
 @app.route('/list/')
@@ -93,9 +145,13 @@ def load_user(id):
 
 @app.route('/login/', methods = ['GET', 'POST'])
 def login():
+    print(f"Get into login route")
     if g.user is not None and g.user.is_authenticated:
         flash('login successed')
         return redirect(url_for('index'))
+    else:
+        print(f"Not login yet")
+
     form = LoginForm()
     if form.validate_on_submit():
         print(f"USER VALIDATE SuCCESSfull   active:{g.user.is_active}")
@@ -109,11 +165,17 @@ def login():
             login_user(user, remember=True)
             return redirect(url_for('index'))
     else:
-        return redirect(url_for('login'))
+        print(f"USER VALIDATE FAILED")
+        return render_template('login.html', form=form)
 					
-@app.route('/logout/')
+# @app.route('/logout/')
+# def logout():
+#     logout_user()
+#     return redirect(url_for('index'))
+
+@app.route('/logout')
 def logout():
     logout_user()
-    return redirect(url_for('index'))
-
+    flash('You have been logged out')
+    return redirect(url_for('index')) 
 # ====================
