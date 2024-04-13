@@ -2,8 +2,11 @@ from flask import url_for, redirect, render_template, flash, g, session
 from flask_login import login_user, logout_user, current_user, login_required
 from app import app, lm
 from app.forms import ExampleForm, LoginForm
-from app.models import User
-
+from app.models import User, Question, SelectedQuestion
+from flask import request
+from utils.crud import query_all_users, query_all_questions, insert_init_questions, query_questions_by_ids, query_all_selected_questions, clear_all_selected_questions
+from app import db
+from flask import jsonify
 
 @app.route('/')
 def index():
@@ -11,9 +14,49 @@ def index():
 
 
 @app.route('/list/')
-def posts():
-	return render_template('list.html')
+def list():
+    question_type = request.args.get('question_type')
+    questions = query_all_questions()
+    return render_template('list.html', question_type= question_type, questions=questions)
 
+@app.route('/submit_selections', methods=['POST'])
+def submit_selections():
+    last_res = query_all_selected_questions()
+    if len(last_res) > 0:
+        message = f"已经有{len(last_res)}道题发送到学生，请先终止答题"
+        flash(message=message)
+        return redirect(url_for('list'))
+
+    selected_question_ids = request.form.getlist('question')
+    user_id = current_user.id  # replace with your actual user ID
+
+    selected_questions = query_questions_by_ids(selected_question_ids)
+    for question in selected_questions:
+        selected_question = SelectedQuestion(question_id=question['id'], user_id=user_id)
+        db.session.add(selected_question)
+    db.session.commit()
+
+    res = query_all_selected_questions()
+    message = f"已将{len(res)}道题发送到学生"
+    flash(message=message)
+
+    return redirect(url_for('list'))
+
+@app.route('/end', methods=['GET'])
+def end():
+    user_id = current_user.id  # replace with your actual user ID
+
+    # Query all selected questions for the current user
+    selected_questions = SelectedQuestion.query.filter_by(user_id=user_id).all()
+
+    # Delete all selected questions
+    for question in selected_questions:
+        db.session.delete(question)
+
+    db.session.commit()
+
+    flash('已终止答题')
+    return redirect(url_for('list'))
 
 @app.route('/new/')
 @login_required

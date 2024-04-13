@@ -29,3 +29,21 @@ class User(db.Model):
 
     def __repr__(self):
         return '<User %r>' % (self.nickname)
+
+class Question(db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    title = db.Column(db.Text)
+    level = db.Column(db.Integer)
+    # tag = db.Column(
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'title': self.title,
+            'level': self.level
+        }
+    
+class SelectedQuestion(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    question_id = db.Column(db.Integer, db.ForeignKey('question.id'), nullable=False, unique=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)

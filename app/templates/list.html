@@ -1,61 +1,40 @@
 {% extends "base.html" %}
-{% import "bootstrap_wtf.html" as wtf %}
 
 {%block title%}Lista!{%endblock%}
 
 {%block main_content%}
 
-	<h1>Listagem</h1>
-	
-	<div class="row">
-		<div class="span12">
+<h1>{{question_type}}</h1>
 
-			Listagem...
 
-			<table class="table">
-				<tr>
-					<th>Coluna 1</th>
-					<th>Coluna 2</th>
-					<th>Coluna 3</th>
-					<th>Coluna 4</th>
-					<th>Coluna 5</th>
-					<th>Coluna 6</th>
-				</tr>
-				<tr>
-					<td>valor 1</td>
-					<td>valor 2</td>
-					<td>valor 3</td>
-					<td>valor 4</td>
-					<td>valor 5</td>
-					<td>valor 6</td>
-				</tr>
-				<tr>
-					<td>valor 1</td>
-					<td>valor 2</td>
-					<td>valor 3</td>
-					<td>valor 4</td>
-					<td>valor 5</td>
-					<td>valor 6</td>
-				</tr>
-				<tr>
-					<td>valor 1</td>
-					<td>valor 2</td>
-					<td>valor 3</td>
-					<td>valor 4</td>
-					<td>valor 5</td>
-					<td>valor 6</td>
-				</tr>
-				<tr>
-					<td>valor 1</td>
-					<td>valor 2</td>
-					<td>valor 3</td>
-					<td>valor 4</td>
-					<td>valor 5</td>
-					<td>valor 6</td>
-				</tr>
-			</table>
+<form action="/submit_selections" method="post">
+    <table class="table">
+        <tr>
+            <th>选择</th>
+            <th>问题</th>
+            <th>难度</th>
+        </tr>
+        {% for question in questions %}
+            <tr>
+                <td><input type="checkbox" name="question" value="{{ question.id }}"></td>
+                <td>{{ question.title }}</td>
+                <td>{{ question.level }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+    <input type="submit" value="开始答题">
+</form>
+<button onclick="location.href='{{ url_for('end') }}'">终止答题</button>
 
-		</div>
-	</div>
+
+
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <div class="alert alert-info">
+      {{ messages[0] }}
+    </div>
+  {% endif %}
+{% endwith %}
 
 {%endblock%}
