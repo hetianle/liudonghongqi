@@ -13,14 +13,6 @@ if __name__ == "__main__":
 	
     with app_runner.app_context():
         db.create_all()
-        # new_user = User(id=1345, user='123456',password='1234646')
-        # db.session.add(new_user)
-        # db.session.commit()
-        # clear_db(User)
-        # query_all_users()
-        # # insert_init_questions()
-        # print(f"----------------------------------------------")
-        # query_all_questions()
         init_user_databse()
         init_question_databse()
 

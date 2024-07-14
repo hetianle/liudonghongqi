@@ -2,11 +2,12 @@ from flask import url_for, redirect, render_template, flash, g, session
 from flask_login import login_user, logout_user, current_user, login_required
 from app import app, lm
 from app.forms import ExampleForm, LoginForm
-from app.models import User, Question, SelectedQuestion, Grade
+from app.models import User, Question, SelectedQuestion, Grade, UserRole
 from flask import request
 from utils.crud import  query_all_questions,  query_questions_by_ids, query_all_selected_questions, clear_all_selected_questions
 from app import db
 from flask import jsonify
+# from app.models import User, Question, SelectedQuestion, Grade
 
 @app.route('/leaderboard')
 def leaderboard():
@@ -17,7 +18,7 @@ def leaderboard():
 def index():
     if g.user is not None and g.user.is_authenticated:
         # flash('login successed')
-        if g.user.identity == '老师':
+        if g.user.identity == UserRole.ADMINISTRATOR:
             return render_template('index.html')
         else:
             selected_questions_id = SelectedQuestion.query.all()

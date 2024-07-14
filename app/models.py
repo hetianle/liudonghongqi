@@ -1,6 +1,11 @@
 from app import db
 from sqlalchemy import Enum
 
+class UserRole(Enum):
+    ADMINISTRATOR = "administrator"
+    EVALUATOR = "evaluator"
+    SUBSCRIBER = "subscriber"
+
 class ModelExample(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	title = db.Column(db.String(250))
@@ -12,11 +17,7 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     user = db.Column(db.String(64), unique = True)
     password = db.Column(db.String(500))
-    identity = db.Column(Enum('老师', '学生'))
-
-    # name = db.Column(db.String(500))
-    # email = db.Column(db.String(120), unique = True)
-    # posts = db.relationship('Post', backref = 'author', lazy = 'dynamic')
+    identity = db.Column(Enum(UserRole.ADMINISTRATOR, UserRole.EVALUATOR, UserRole.SUBSCRIBER))
 
     def is_authenticated(self):
         return True

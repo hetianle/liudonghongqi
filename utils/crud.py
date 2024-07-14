@@ -1,6 +1,6 @@
 
 from app.models import User
-from app.models import Question,SelectedQuestion,Grade
+from app.models import Question,SelectedQuestion,Grade, UserRole
 from app import db
 
 def query_all_users():
@@ -83,12 +83,12 @@ def init_question_databse():
 
 def init_user_databse():
     init_users = [
-        {'user': 'tea1', 'password': '123', 'identity': '老师'},
-        {'user': 'tea2', 'password': '123', 'identity': '老师'},
-        {'user': 'stu1', 'password': '123', 'identity': '学生'},
-        {'user': 'stu2', 'password': '123', 'identity': '学生'},
-        {'user': 'stu3', 'password': '123', 'identity': '学生'},
-        {'user': 'stu4', 'password': '123', 'identity': '学生'},
+        {'user': 'tea1', 'password': '123', 'identity':  UserRole.ADMINISTRATOR},
+        {'user': 'tea2', 'password': '123', 'identity': UserRole.ADMINISTRATOR},
+        {'user': 'stu1', 'password': '123', 'identity': UserRole.SUBSCRIBER},
+        {'user': 'stu2', 'password': '123', 'identity': UserRole.SUBSCRIBER},
+        {'user': 'stu3', 'password': '123', 'identity': UserRole.SUBSCRIBER},
+        {'user': 'stu4', 'password': '123', 'identity': UserRole.SUBSCRIBER},
     ]
     for user_data in init_users:
         user = User.query.filter_by(user=user_data['user']).first()
