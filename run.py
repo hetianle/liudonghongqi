@@ -3,7 +3,7 @@ from app import db
 from app.models import User
 from utils.crud import query_all_users, query_all_questions, init_question_databse, init_user_databse, query_all_selected_questions, clear_all_selected_questions, clear_all_grades
 from app import app as app_runner
-
+from flask_bootstrap import Bootstrap
 # from utils.crud import clear_db
 #----------------------------------------
 # launch

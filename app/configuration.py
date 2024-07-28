@@ -21,6 +21,9 @@ class ProductionConfig(Config):
 
 class DevelopmentConfig(Config):
 	DEBUG = True
+	BOOTSTRAP_SERVE_LOCAL = True
+	BOOTSTRAP_VERSION = 5
+    
 
 class TestingConfig(Config):
 	TESTING = True
