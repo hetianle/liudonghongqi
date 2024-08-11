@@ -1,7 +1,8 @@
 
 from app.models import User
-from app.models import Question,SelectedQuestion,Grade, UserRole
+# from app.models import Question,SelectedQuestion,Grade, UserRole
 from app import db
+from app.models import UserRole
 
 def query_all_users():
     users = User.query.all()
@@ -21,13 +22,13 @@ def query_all_selected_questions():
         print(f"selected question db: questionid:{question.question_id}  userid:{question.user_id}")
     return questions
 
-def clear_all_selected_questions():
-    questions = SelectedQuestion.query.all()
-    for question in questions:
-        db.session.delete(question)
-    db.session.commit()
-    # print(f"Num Selected Questions:{len(questions)}")
-    return questions
+# def clear_all_selected_questions():
+#     questions = SelectedQuestion.query.all()
+#     for question in questions:
+#         db.session.delete(question)
+#     db.session.commit()
+#     # print(f"Num Selected Questions:{len(questions)}")
+#     return questions
 
 def clear_all_grades():
     grades = Grade.query.all()
@@ -83,12 +84,12 @@ def init_question_databse():
 
 def init_user_databse():
     init_users = [
-        {'user': 'tea1', 'password': '123', 'identity':  UserRole.ADMINISTRATOR},
-        {'user': 'tea2', 'password': '123', 'identity': UserRole.ADMINISTRATOR},
-        {'user': 'stu1', 'password': '123', 'identity': UserRole.SUBSCRIBER},
-        {'user': 'stu2', 'password': '123', 'identity': UserRole.SUBSCRIBER},
-        {'user': 'stu3', 'password': '123', 'identity': UserRole.SUBSCRIBER},
-        {'user': 'stu4', 'password': '123', 'identity': UserRole.SUBSCRIBER},
+        {'user': 'admin1', 'password': '123', 'identity':  UserRole.ADMINISTRATOR},
+        {'user': 'admin2', 'password': '123', 'identity': UserRole.ADMINISTRATOR},
+        {'user': 'eval1', 'password': '123', 'identity': UserRole.EVALUATOR},
+        {'user': 'eval2', 'password': '123', 'identity': UserRole.EVALUATOR},
+        {'user': 'eval3', 'password': '123', 'identity': UserRole.EVALUATOR},
+        {'user': 'eval4', 'password': '123', 'identity': UserRole.EVALUATOR},
     ]
     for user_data in init_users:
         user = User.query.filter_by(user=user_data['user']).first()

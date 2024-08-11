@@ -158,16 +158,6 @@
         });
     };
 
-
-
-
-
-
-
-
-
-
-
     document.addEventListener('DOMContentLoaded', function() {
         var toggleButton = document.querySelector('[data-toggle="collapse"]');
         var mainContent = document.getElementById('main_content');
@@ -189,6 +179,33 @@
             });
         }
     });
+
+    $(document).ready(function() {
+
+        $("#sidebar-collapse").mCustomScrollbar({
+            theme: "minimal"
+        });
+    
+        $('#dismiss, .overlay').on('click', function() {
+            $('#sidebar').removeClass('active');
+            $('.overlay').removeClass('active');
+        });
+    
+        $('#sidebar-collapse').on('click', function() {
+            $('#sidebar').addClass('active');
+            $('.overlay').addClass('active');
+            $('.collapse.in').toggleClass('in');
+            $('a[aria-expanded=true]').attr('aria-expanded', 'false');
+        });
+    
+        // Add event listener to collapse sidebar when clicking outside of it
+        $(document).on('click', function(event) {
+            if (!$(event.target).closest('#sidebar, #sidebar-collapse').length) {
+                $('#sidebar').removeClass('active');
+                $('.overlay').removeClass('active');
+            }
+        });
+    });
 </script>
 
 <nav class="navbar navbar-default">
@@ -205,16 +222,23 @@
         <div class="navbar-right">
             <div class="dropdown">
                 <button class="btn btn-default dropdown-toggle" type="button" id="userMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    user1 <span class="caret"></span>
+                    {% if user.is_authenticated %}
+                        {{ user.user }} <span class="caret"></span>
+                    {% else %}
+                        登录<span class="caret"></span>
+                    {% endif %}
                 </button>
+
                 <ul class="dropdown-menu" aria-labelledby="userMenu">
-                    <li><a href="#">Change Password</a></li>
-                    <li><a href="#">Log Out</a></li>
+                    {% if user.is_authenticated %}
+                    <li><a href="{{ url_for('logout') }}">退出</a></li>
+                     {% else %}
+                     <li><a></a></li>
+                     {% endif %}
+
                 </ul>
             </div>
         </div>
-        <!-- <a class="navbar-brand" href="#">用户</a> -->
-        <!-- <p class="navbar-text" style="margin-left: 18px;">用户:{{ g.user.user }}</p> -->
 </nav>
 
     <div class="collapse" id="sidebar-collapse">
@@ -225,8 +249,7 @@
             </div>
             <a href="#">流动红旗</a>
             <div class="submenu">
-                <a href="#">评价管理</a>
-                <a href="#">评价设置</a>
+                <a href="{{url_for('evaluation_settings')}}">评价设置</a>
                 <a href="#">默认评价地点</a>
                 <a href="#">默认评价班级</a>
                 <a href="#">记录管理</a>
@@ -243,7 +266,26 @@
 
 {%block content %}
 
+
+<script>
+    // JavaScript to hide the flash message after 3 seconds
+    setTimeout(function() {
+        var flashMessage = document.getElementById('flash-message');
+        if (flashMessage) {
+            flashMessage.style.display = 'none';
+        }
+    }, 1000); // 3000 milliseconds = 3 seconds
+</script>
+
 <div class="container">
+
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <div id="flash-message" class="alert alert-warning text-center">
+            <p>{{ messages[0] }}</p>
+        </div>
+    {% endif %}
+{% endwith %}
 
 
 	{%block main_content%}{%endblock%}

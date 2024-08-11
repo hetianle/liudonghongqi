@@ -1,0 +1,177 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  Index!
+{% endblock %}
+
+{% block main_content %}
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-sm-12 col-lg-12">
+        <div class="card">
+          <div class="card-body clearfix">
+            <div>
+              <p class="h3 text-center text-primary m-t-0">评价设置</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+
+
+
+  <h1>评价设置</h1>
+  <form method="POST">
+      <label for="item_name">评价项目:</label>
+      <input type="text" id="item_name" name="item_name" required>
+      <br>
+      <label for="dimension_names">评价指标 (多个指标用逗号分隔):</label>
+      <input type="text" id="dimension_names" name="dimension_names" required>
+      <br>
+      <button type="submit">添加项目</button>
+  </form>
+
+  <h2>当前评价设置</h2>
+  <ul>
+      {% for item in items %}
+          <li>
+              <strong>{{ item.name }}</strong>
+              <ul>
+                  {% for dimension in item.dimensions %}
+                      <li>{{ dimension.name }}</li>
+                  {% endfor %}
+              </ul>
+          </li>
+      {% endfor %}
+  </ul>
+
+
+
+
+
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="card">
+            <div class="card-toolbar clearfix">
+                <h3 class="center" style="text-align: center;">评价项目</h3>
+                <div class="btn m-r-5 btn-primary">
+                    <span>广播操</span> <i class="mdi mdi-pencil"></i> <i class="mdi mdi-window-close"></i> <i class="mdi mdi-puzzle"></i>
+                </div>
+                <div class="btn m-r-5 btn-default">
+                    <span>卫生</span> <i class="mdi mdi-pencil"></i> <i class="mdi mdi-window-close"></i> <i class="mdi mdi-puzzle"></i>
+                </div>
+                <div class="btn m-r-5 btn-default">
+                    <span>学生行为规范</span> <i class="mdi mdi-pencil"></i> <i class="mdi mdi-window-close"></i> <i class="mdi mdi-puzzle"></i>
+                </div>
+                <div class="btn m-r-5 btn-default">
+                    <span>自习</span> <i class="mdi mdi-pencil"></i> <i class="mdi mdi-window-close"></i> <i class="mdi mdi-puzzle"></i>
+                </div>
+                <div class="btn btn-primary m-r-5">
+                    <i class="mdi mdi-plus"></i>
+                </div>
+            </div>
+            <div class="table-responsive">
+              <table class="table table-bordered">
+                <thead>
+                  <tr>
+                    <th></th> <th colspan="1">
+                      <table class="table table-bordered">
+                        <tbody>
+                          <tr>
+                            <th colspan="1" class="text-center">
+                              <span>路队整齐安静</span> <i class="mdi mdi-pencil"></i> <i class="mdi mdi-window-close"></i>
+                            </th>
+                          </tr> <tr>
+                            <td class="text-center">路队整齐安静</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </th>
+                    <th colspan="1">
+                      <table class="table table-bordered">
+                        <tbody>
+                          <tr>
+                            <th colspan="1" class="text-center">
+                              <span>广播操/室内操</span> <i class="mdi mdi-pencil"></i> <i class="mdi mdi-window-close"></i>
+                            </th>
+                          </tr> <tr>
+                            <td class="text-center">广播操/室内操</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </th>
+                    <th colspan="1">
+                      <table class="table table-bordered">
+                        <tbody>
+                          <tr>
+                            <th colspan="1" class="text-center">
+                              <span>课间操/室内操</span> <i class="mdi mdi-pencil"></i> <i class="mdi mdi-window-close"></i>
+                            </th>
+                          </tr> <tr>
+                            <td class="text-center">课间操/室内操</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </th> <th>
+                      <div class="btn btn-primary m-r-5">
+                        <i class="mdi mdi-pencil"></i>
+                        新增指标
+                      </div>
+                    </th>
+                  </tr>
+                </thead> <tbody>
+                  <tr>
+                    <td>
+                      <span>五年级1班</span>
+                    </td> <td class="text-center"></td>
+                    <td class="text-center"></td>
+                    <td class="text-center"></td> <td></td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <span>三年级1班</span>
+                    </td> <td class="text-center"></td>
+                    <td class="text-center"></td>
+                    <td class="text-center"></td> <td></td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <span>一年级2班</span>
+                    </td> <td class="text-center"></td>
+                    <td class="text-center"></td>
+                    <td class="text-center"></td> <td></td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <span>四年级1班</span>
+                    </td> <td class="text-center"></td>
+                    <td class="text-center"></td>
+                    <td class="text-center"></td> <td></td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <span>二年级1班</span>
+                    </td> <td class="text-center"></td>
+                    <td class="text-center"></td>
+                    <td class="text-center"></td> <td></td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <span>一年级1班</span>
+                    </td> <td class="text-center"></td>
+                    <td class="text-center"></td>
+                    <td class="text-center"></td> <td></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
