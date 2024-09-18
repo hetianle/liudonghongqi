@@ -8,31 +8,121 @@ from flask import request
 from app import db
 from flask import jsonify
 # from app.models import User, Question, SelectedQuestion, Grade
-from app.models import EvaluationItem, EvaluationDimension
+from app.models import EvaluationItem, EvaluationDimension, EvaluationResult
+from app.models import User, ClassName
+
+from datetime import datetime
+import pytz
+
+# Set the time as Beijing time
+beijing_tz = pytz.timezone('Asia/Shanghai')
+
 
 
 @app.route('/evaluation_settings', methods=['GET', 'POST'])
 def evaluation_settings():
+    # if currenct user's role is not admin 
+    if g.user.identity != UserRole.ADMINISTRATOR:
+        flash('暂无权限', 'warning')
+        return render_template('base.html', user=g.user)  # Assuming you have a blank.html template
+    
     if request.method == 'POST':
         item_name = request.form.get('item_name')
-        dimension_names = request.form.getlist('dimension_names')
+        dimension_names = request.form.get('dimension_names')
+        # admin_user_id = request.form.get('admin_user_id')
+        evaluator_ids = request.form.getlist('evaluators')
+        class_ids = request.form.getlist('classes')
+        admin_user_id = current_user.id
+        start_date = request.form.get('start_date')
+        end_date = request.form.get('end_date')
+        loop_rule = request.form.get('evaluation_loop')
+        # if item_name and dimension_names:
+        #     for dimension_name in dimension_names.split(' '):
+        #         new_dimension = EvaluationDimension(name=dimension_name)
+        #         db.session.add(new_dimension)
 
         if item_name and dimension_names:
-            new_item = EvaluationItem(name=item_name)
+            new_item = EvaluationItem(name=item_name, admin_user_id=admin_user_id, )
+            if evaluator_ids:
+                for evaluator_id in evaluator_ids:
+                    evaluator_user = User.query.get(evaluator_id)
+                    if evaluator_user:
+                        new_item.evaluators.append(evaluator_user)
+            if class_ids:
+                for class_id in class_ids:
+                    class_name = ClassName.query.get(class_id)
+                    if class_name:
+                        new_item.evaluate_classes.append(class_name)
+            if dimension_names:
+                for dimension_name in dimension_names.split(' '):
+                    diname = EvaluationDimension.query.get(dimension_name)
+                    if diname:
+                        new_item.dimensions.append(diname)
+                    else:
+                        # insert the input diname into EvaluationDimension db
+                        new_dimension = EvaluationDimension(name=dimension_name, item_name=new_item.name)
+                        db.session.add(new_dimension)
+                        db.session.commit()
+                        new_item.dimensions.append(new_dimension)
+            
+            if start_date and end_date and loop_rule:
+                # print(start_date,'--------------------------------------------------------')
+                new_item.start_date = datetime.strptime(start_date, "%Y-%m-%d")
+                new_item.end_date = datetime.strptime(end_date, "%Y-%m-%d")
+                new_item.loop_rule = loop_rule
+            
+            
             db.session.add(new_item)
             db.session.commit()
-
-            for dimension_name in dimension_names:
-                new_dimension = EvaluationDimension(name=dimension_name, item_id=new_item.id)
-                db.session.add(new_dimension)
 
             db.session.commit()
             return redirect(url_for('evaluation_settings'))
 
     items = EvaluationItem.query.all()
-    return render_template('evalsettings.html', user=g.user, items=items)
+    evaluators = User.query.all()
+    classes = ClassName.query.all()
+    return render_template('evalsettings.html', user=g.user, items=items, evaluators= evaluators, classes=classes)
 
 
+@app.route('/evaluation', methods=['GET', 'POST'])
+def evaluation():
+    # if g.user.identity != 'admin':
+    #     flash('You do not have the necessary permissions to access this page.', 'warning')
+    #     return render_template('base.html', user=g.user,)
+
+    evaluation_items = EvaluationItem.query.all()
+
+    if request.method == 'POST':
+        beijing_tz = pytz.timezone('Asia/Shanghai')
+        for item in evaluation_items:
+            evaluators = item.evaluators
+            if g.user in evaluators:
+                for class_ in item.evaluate_classes:
+                    for dimension in item.dimensions:
+                        score = request.form.get(f'score_{item.id}_{class_.id}_{dimension.id}')
+                        if score:
+                            evaluation_result = EvaluationResult(
+                                evaluation_item_id=item.id,
+                                user_id=g.user.id,
+                                dimension_id=dimension.id,
+                                class_id=class_.id,
+                                grade=float(score),
+                                time=datetime.now(beijing_tz)
+                            )
+                            db.session.add(evaluation_result)
+        db.session.commit()
+        flash('Evaluation results saved successfully!', 'success')
+        return redirect(url_for('evaluation'))
+
+    return render_template('evaluation.html', user=g.user, evaluation_items=evaluation_items)
+
+@app.route('/evaluation_results', methods=['GET'])
+def evaluation_results():
+    # Query all evaluation results from the database
+    results = EvaluationResult.query.all()
+    
+    # Render the evaluation_results.html template with the retrieved results
+    return render_template('evaluation_results.html', results=results, user=g.user)
 
 @app.route('/')
 def index():

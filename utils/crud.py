@@ -1,5 +1,5 @@
 
-from app.models import User
+from app.models import User, ClassName
 # from app.models import Question,SelectedQuestion,Grade, UserRole
 from app import db
 from app.models import UserRole
@@ -49,39 +49,6 @@ def query_questions_by_ids(ids):
     return results 
 
 
-
-def init_question_databse():
-    questions = [
-        {'title': 'Question 1', 'level': 'Easy', 'answer': 'A', 'choices':''},
-        {'title': 'Question 2', 'level': 'Medium', 'answer': 'A', 'choices':''},
-        {'title': 'Question 3', 'level': 'Hard', 'answer': 'A', 'choices':''},
-        {'title': 'Question 4', 'level': 'Easy', 'answer': 'A', 'choices':''},
-        {'title': 'Question 5', 'level': 'Medium', 'answer': 'A', 'choices':''},
-        {'title': 'Question 6', 'level': 'Hard', 'answer': 'A', 'choices':''},
-        {'title': 'Question 1', 'level': 'Easy', 'answer': 'A', 'choices':''},
-        {'title': 'Question 2', 'level': 'Medium', 'answer': 'A', 'choices':''},
-        {'title': 'Question 3', 'level': 'Hard', 'answer': 'A', 'choices':''},
-        {'title': 'Question 4', 'level': 'Easy', 'answer': 'A', 'choices':''},
-        {'title': 'Question 5', 'level': 'Medium', 'answer': 'A', 'choices':''},
-        {'title': 'Question 7777', 'level': 'Hard', 'answer': 'A', 'choices':''},
-        # Add more questions as needed
-    ]
-    questions = [
-        {'title': '上海面积最大的区是哪个？', 'level': 'Easy', 'candidate_answers': {'A': '浦东新区', 'B': '青浦区', 'C': '松江区', 'D': '嘉定区'}, 'correct_answer': 'A'},
-        {'title': '下面四个城市与上海接壤的城市是哪个', 'level': 'Easy', 'candidate_answers': {'A': '苏州', 'B': '杭州', 'C': '南京', 'D': '无锡'}, 'correct_answer': 'A'},
-        {'title': '抗日战争时期下面哪场战役发生在上海？',   'level': 'Easy', 'candidate_answers': {'A': '淞沪会战', 'B': '平型关战役', 'C': '台儿庄战役', 'D': '百团大战'}, 'correct_answer': 'A'},
-        {'title': '淞沪会战后期为什么在中国军队几乎完全撤离的情况下仍然要守护四行仓库？', 'level': 'Hard', 'candidate_answers': {'A': '为了保护列强的资产', 'B': '为了向列强证明中国仍然在抵抗为了维护中国的尊严', 'C': '为了守护坚固据点等待援军反击', 'D': '为了保护上海的工业'}, 'correct_answer': 'B'},
-
-    ]
-
-    for question_data in questions:
-        question_query = Question.query.filter_by(title=question_data['title']).first()
-        if question_query is None:
-            question = Question(title=question_data['title'], level=question_data['level'], candidate_answers=question_data['candidate_answers'], correct_answer=question_data['correct_answer'])
-            db.session.add(question)
-    db.session.commit()
-
-
 def init_user_databse():
     init_users = [
         {'user': 'admin1', 'password': '123', 'identity':  UserRole.ADMINISTRATOR},
@@ -99,6 +66,19 @@ def init_user_databse():
     db.session.commit()
 
 
+def init_classname_database():
+    init_classes = [
+        {'name': 'class1'},
+        {'name': 'class2'},
+        {'name': 'class3'},
+        {'name': 'class4'},
+    ]
+    for class_data in init_classes:
+        class_name = ClassName.query.filter_by(name=class_data['name']).first()
+        if class_name is None:
+            class_name = ClassName(name=class_data['name'])
+            db.session.add(class_name)
+    db.session.commit()
 
 def clear_db_data(model):
     db.session.query(model).delete()

@@ -1,0 +1,44 @@
+
+
+  {% if evaluation_items %}
+    <form method="POST">
+      {% for item in evaluation_items %}
+        {% if user in item.evaluators %}
+          <h3>{{ item.name }}</h3>
+          <p>{{ item.description }}</p>
+
+          {% for class in item.evaluate_classes %}
+            <h4>班级: {{ class.name }}</h4>
+            <ul>
+              {% for dimension in item.dimensions %}
+                <li>
+                  <label for="score_{{ item.id }}_{{ class.id }}_{{ dimension.id }}">{{ dimension.name }}</label>
+                  <input type="number" name="score_{{ item.id }}_{{ class.id }}_{{ dimension.id }}" id="score_{{ item.id }}_{{ class.id }}_{{ dimension.id }}" min="0" max="100" required />
+                </li>
+              {% endfor %}
+            </ul>
+          {% endfor %}
+          <button type="submit">Submit</button>
+        {% endif %}
+      {% endfor %}
+    </form>
+  {% else %}
+    <p>No evaluation items found for the current user.</p>
+  {% endif %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

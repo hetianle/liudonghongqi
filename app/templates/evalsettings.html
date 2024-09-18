@@ -1,177 +1,92 @@
 {% extends 'base.html' %}
 
 {% block title %}
-  Index!
+    Index!
 {% endblock %}
 
 {% block main_content %}
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-sm-12 col-lg-12">
-        <div class="card">
-          <div class="card-body clearfix">
-            <div>
-              <p class="h3 text-center text-primary m-t-0">评价设置</p>
-            </div>
-          </div>
+<script>
+    function processInput() {
+        var input = document.getElementById('dimension_names').value;
+        var elements = input.split(' ');
+        console.log(elements); // This will log the array of elements to the console
+        // You can further process the elements array as needed
+    }
+</script>
+
+
+<div class="container-fluid">
+<div class="row">
+    <div class="col-sm-12 col-lg-12">
+    <div class="card">
+        <div class="card-body clearfix">
+        <div>
+            <p class="h3 text-center text-primary m-t-0">评价设置</p>
         </div>
-      </div>
-    </div>
-  </div>
-  
-
-
-
-
-  <h1>评价设置</h1>
-  <form method="POST">
-      <label for="item_name">评价项目:</label>
-      <input type="text" id="item_name" name="item_name" required>
-      <br>
-      <label for="dimension_names">评价指标 (多个指标用逗号分隔):</label>
-      <input type="text" id="dimension_names" name="dimension_names" required>
-      <br>
-      <button type="submit">添加项目</button>
-  </form>
-
-  <h2>当前评价设置</h2>
-  <ul>
-      {% for item in items %}
-          <li>
-              <strong>{{ item.name }}</strong>
-              <ul>
-                  {% for dimension in item.dimensions %}
-                      <li>{{ dimension.name }}</li>
-                  {% endfor %}
-              </ul>
-          </li>
-      {% endfor %}
-  </ul>
-
-
-
-
-
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-lg-12">
-        <div class="card">
-            <div class="card-toolbar clearfix">
-                <h3 class="center" style="text-align: center;">评价项目</h3>
-                <div class="btn m-r-5 btn-primary">
-                    <span>广播操</span> <i class="mdi mdi-pencil"></i> <i class="mdi mdi-window-close"></i> <i class="mdi mdi-puzzle"></i>
-                </div>
-                <div class="btn m-r-5 btn-default">
-                    <span>卫生</span> <i class="mdi mdi-pencil"></i> <i class="mdi mdi-window-close"></i> <i class="mdi mdi-puzzle"></i>
-                </div>
-                <div class="btn m-r-5 btn-default">
-                    <span>学生行为规范</span> <i class="mdi mdi-pencil"></i> <i class="mdi mdi-window-close"></i> <i class="mdi mdi-puzzle"></i>
-                </div>
-                <div class="btn m-r-5 btn-default">
-                    <span>自习</span> <i class="mdi mdi-pencil"></i> <i class="mdi mdi-window-close"></i> <i class="mdi mdi-puzzle"></i>
-                </div>
-                <div class="btn btn-primary m-r-5">
-                    <i class="mdi mdi-plus"></i>
-                </div>
-            </div>
-            <div class="table-responsive">
-              <table class="table table-bordered">
-                <thead>
-                  <tr>
-                    <th></th> <th colspan="1">
-                      <table class="table table-bordered">
-                        <tbody>
-                          <tr>
-                            <th colspan="1" class="text-center">
-                              <span>路队整齐安静</span> <i class="mdi mdi-pencil"></i> <i class="mdi mdi-window-close"></i>
-                            </th>
-                          </tr> <tr>
-                            <td class="text-center">路队整齐安静</td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </th>
-                    <th colspan="1">
-                      <table class="table table-bordered">
-                        <tbody>
-                          <tr>
-                            <th colspan="1" class="text-center">
-                              <span>广播操/室内操</span> <i class="mdi mdi-pencil"></i> <i class="mdi mdi-window-close"></i>
-                            </th>
-                          </tr> <tr>
-                            <td class="text-center">广播操/室内操</td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </th>
-                    <th colspan="1">
-                      <table class="table table-bordered">
-                        <tbody>
-                          <tr>
-                            <th colspan="1" class="text-center">
-                              <span>课间操/室内操</span> <i class="mdi mdi-pencil"></i> <i class="mdi mdi-window-close"></i>
-                            </th>
-                          </tr> <tr>
-                            <td class="text-center">课间操/室内操</td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </th> <th>
-                      <div class="btn btn-primary m-r-5">
-                        <i class="mdi mdi-pencil"></i>
-                        新增指标
-                      </div>
-                    </th>
-                  </tr>
-                </thead> <tbody>
-                  <tr>
-                    <td>
-                      <span>五年级1班</span>
-                    </td> <td class="text-center"></td>
-                    <td class="text-center"></td>
-                    <td class="text-center"></td> <td></td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <span>三年级1班</span>
-                    </td> <td class="text-center"></td>
-                    <td class="text-center"></td>
-                    <td class="text-center"></td> <td></td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <span>一年级2班</span>
-                    </td> <td class="text-center"></td>
-                    <td class="text-center"></td>
-                    <td class="text-center"></td> <td></td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <span>四年级1班</span>
-                    </td> <td class="text-center"></td>
-                    <td class="text-center"></td>
-                    <td class="text-center"></td> <td></td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <span>二年级1班</span>
-                    </td> <td class="text-center"></td>
-                    <td class="text-center"></td>
-                    <td class="text-center"></td> <td></td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <span>一年级1班</span>
-                    </td> <td class="text-center"></td>
-                    <td class="text-center"></td>
-                    <td class="text-center"></td> <td></td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
         </div>
-      </div>
     </div>
-  </div>
+    </div>
+</div>
+</div>
+
+<h1>评价设置</h1>
+<form method="POST">
+    <label for="item_name">评价项目:</label>
+    <input type="text" id="item_name" name="item_name" required>
+    <br>
+    <label for="dimension_names">评价指标 (多个指标用空格分隔):</label>
+    <input type="text" id="dimension_names" name="dimension_names" placeholder="输入多个评价指标用空格隔开" required>
+    <br>
+    <label for="evaluator">参与评价老师:</label>
+<br>
+{% for evaluator in evaluators %}
+    <input type="checkbox" id="evaluator_{{ evaluator.id }}" name="evaluators" value="{{ evaluator.id }}">
+    <label for="evaluator_{{ evaluator.id }}">{{ evaluator.user }}</label>
+    <br>
+{% endfor %}
+<br>
+<label for="class_name">被评价班级:</label>
+<br>
+{% for class in classes %}
+    <input type="checkbox" id="class_{{ class.id }}" name="classes" value="{{ class.id }}">
+    <label for="class_{{ class.id }}">{{ class.name }}</label>
+    <br>
+{% endfor %}
+<br>
+<label for="start_date">开始日期:</label>
+<input type="date" id="start_date" name="start_date" required>
+<br>
+<label for="end_date">结束日期:</label>
+<input type="date" id="end_date" name="end_date" required>
+<br>
+<label for="evaluation_loop">评价循环规则:</label>
+<select id="evaluation_loop" name="evaluation_loop" required>
+    <option value="monthly">每月</option>
+    <option value="weekly" selected>每周</option>
+    <option value="daily">每天</option>
+</select>
+<br>
+
+<button type="submit">添加项目</button>
+<br>
+</form>
+
+<h2>已设置评价项</h2>
+<ul>
+    {% for item in items %}
+        <li>
+            <strong>评价项：{{ item.name }}</strong>
+            <ul>
+                <li>评价人: {{ item.evaluators }}</li>
+                <li>班级: {{ item.evaluate_classes}}</li>
+                <li>评价维度: {{ item.dimensions}}</li>
+                <li>开始日期: {{ item.start_date}}</li>
+                <li>结束日期: {{ item.end_date}}</li>
+                <li>评价周期: {{ item.loop_rule}}</li>
+
+            </ul>
+        </li>
+    {% endfor %}
+</ul>
+
 {% endblock %}

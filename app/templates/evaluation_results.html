@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Index!
+{% endblock %}
+
+
+
+
+{% block main_content %}
+<h2>评价结果</h2>
+<h2>Evaluation Results</h2>
+
+
+<style>
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+        width: 20%; /* Adjust the width as needed */
+    }
+    th {
+        background-color: #f2f2f2;
+    }
+</style>
+
+{% if results %}
+<table>
+    <thead>
+        <tr>
+            <th>评价项目</th>
+            <th>评价人</th>
+            <th>评价班级</th>
+            <th>评价维度</th>
+            <th>得分</th>
+            <th>评价时间</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for result in results %}
+            <tr>
+                <td>{{ result.evaluation_item.name }}</td>
+                <td>{{ result.user.user }}</td>
+                <td>{{ result.class_.name }}</td>
+                <td>{{ result.dimension.name }}</td>
+                <td>{{ result.grade }}</td>
+                <td>{{ result.time.strftime('%Y-%m-%d   %H:%M') }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+    <p>No evaluation results found.</p>
+{% endif %}
+
+{% endblock %}
