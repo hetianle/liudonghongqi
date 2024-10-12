@@ -73,6 +73,13 @@ class EvaluationItem(db.Model):
     loop_rule = db.Column(Enum('monthly', 'weekly', 'daily', name='loop_rule'), nullable=False)
     
     
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'dimensions': [dimension.to_dict() for dimension in self.dimensions],
+        }
+    
     
 class EvaluationDimension(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -80,6 +87,13 @@ class EvaluationDimension(db.Model):
     item_name = db.Column(db.Integer, db.ForeignKey('evaluation_item.name'), nullable=False)
     def __repr__(self):
         return self.name
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            # Add other fields as necessary
+        }
     
     
 class EvaluationResult(db.Model):

@@ -17,7 +17,17 @@ import pytz
 # Set the time as Beijing time
 beijing_tz = pytz.timezone('Asia/Shanghai')
 
+from django.shortcuts import render
+from .models import EvaluationItem
+import json
 
+def evaluation_view(request):
+    evaluation_items = EvaluationItem.objects.all()
+    evaluation_items_dict = [item.to_dict() for item in evaluation_items]
+    context = {
+        'evaluation_items': json.dumps(evaluation_items_dict)
+    }
+    return render(request, 'evaluation.html', context)
 
 @app.route('/evaluation_settings', methods=['GET', 'POST'])
 def evaluation_settings():
@@ -86,12 +96,13 @@ def evaluation_settings():
 
 @app.route('/evaluation', methods=['GET', 'POST'])
 def evaluation():
-    # if g.user.identity != 'admin':
-    #     flash('You do not have the necessary permissions to access this page.', 'warning')
-    #     return render_template('base.html', user=g.user,)
-
     evaluation_items = EvaluationItem.query.all()
-
+    context = {}
+    evaluation_items_dict = [item.to_dict() for item in evaluation_items]
+    # print(f"evaluation_items_dict:----------------------------------\n{evaluation_items_dict}")
+    context.update({
+        'evaluation_items': json.dumps(evaluation_items_dict, ensure_ascii=False)
+    })
     if request.method == 'POST':
         beijing_tz = pytz.timezone('Asia/Shanghai')
         for item in evaluation_items:
@@ -114,7 +125,7 @@ def evaluation():
         flash('Evaluation results saved successfully!', 'success')
         return redirect(url_for('evaluation'))
 
-    return render_template('evaluation.html', user=g.user, evaluation_items=evaluation_items)
+    return render_template('evaluation.html', user=g.user, evaluation_items=evaluation_items, evaluation_items_context = json.dumps(evaluation_items_dict, ensure_ascii=False))
 
 @app.route('/evaluation_results', methods=['GET'])
 def evaluation_results():

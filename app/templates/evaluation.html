@@ -31,28 +31,59 @@
         padding: 10px;
         text-align: left;
       }
+
+      .modal {
+        display: none; 
+        position: fixed; 
+        z-index: 1; 
+        left: 0;
+        top: 0;
+        width: 100%; 
+        height: 100%; 
+        overflow: auto; 
+        background-color: rgb(0,0,0); 
+        background-color: rgba(0,0,0,0.4); 
+    }
+
+    .modal-content {
+        background-color: #fefefe;
+        margin: 15% auto; 
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%; 
+    } 
+
+    .btn-default {
+        background-color: white;
+        color: black;
+    }
+    .selected {
+        background-color: teal;
+        color: white;
+    }
+
 </style>
 
-  <h2>开始评价</h2>
+  <h2>评价任务</h2>
 
   <div class="container-fluid">
     <div class="row">
         <div class="col-lg-12">
             <div class="card">
-                <div class="card-toolbar clearfix">
+                <div id="card-toolbar" class="card-toolbar clearfix">
                     {% for item in evaluation_items %}
-                        <div class="btn m-r-5 {% if loop.first %}btn-primary{% else %}btn-default{% endif %}">
+                        <div class="btn m-r-5 btn-default" data-item-id="{{ item.id }}" data-item-name="{{ item.name }}">
                             <span>{{ item.name }}</span>
                         </div>
                     {% endfor %}
                 </div>
+                <div id="table-container"></div>
                 
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table table-bordered">
                             <thead>
                                 <tr>
-                                    <th><div class="lyear-checkbox checkbox-primary"><input type="checkbox"> <span>全选</span></div></th>
                                     <th>Evaluation Item Name</th>
                                     <th>Start Date</th>
                                     <th>End Date</th>
@@ -63,12 +94,11 @@
                             <tbody>
                                 {% for item in evaluation_items %}
                                 <tr>
-                                    <td><div class="lyear-checkbox checkbox-primary"><input type="checkbox"> <span>{{ item.name }}</span></div></td>
                                     <td>{{ item.name }}</td>
                                     <td>{{ item.start_date }}</td>
                                     <td>{{ item.end_date }}</td>
                                     <td>{{ item.loop_rule }}</td>
-                                    <td class="text-center"><a href="javascript:;">评价</a></td>
+                                    <td class="text-center"><a href="javascript:;" class="evaluate-link" data-item-id="{{ item.id }}">评价</a></td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
@@ -81,6 +111,128 @@
 </div>
 
 
+<div id="myModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <p>这里是子页面内容。</p>
+    </div>
+  </div>
 
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const buttons = document.querySelectorAll('.btn[data-item-id]');
+        const tableContainer = document.getElementById('table-container');
+
+        buttons.forEach(button => {
+            button.addEventListener('click', function() {
+                // 移除所有按钮的选中状态
+                buttons.forEach(btn => btn.classList.remove('selected'));
+                
+                // 添加当前按钮的选中状态
+                this.classList.add('selected');
+
+                // 获取选中的item id
+                const itemId = this.getAttribute('data-item-id');
+                const itemname  = this.getAttribute('data-item-name');
+
+                // console.info(`Clicked item ID: ${itemId}__Clicked item name:${itemname}`);
+                // alert(itemId)
+                //alert(itemname)
+
+                const evaluationItems = {{ evaluation_items_context|safe }};
+
+                //alert(JSON.stringify(evaluationItems))
+                // 根据itemId找到对应的item
+                const selectedItem = evaluationItems.find(item => item.id === Number(itemId));
+                
+                alert(`selected item== ${JSON.stringify(selectedItem)}`)
+                // 判断selectedItem是否查找成功
+                //if (!selectedItem) {
+                //    alert(`Item with ID ${JSON.stringify(selectedItem)} NNN.`);
+               //     return;
+               // }else{
+                 //   alert(`Item with ID ${JSON.stringify(selectedItem)} YYYY.`)
+                //}
+
+                // 将选中的item传递给generateTable函数
+                generateTable(selectedItem);
+
+                // generateTable(itemId);
+
+                
+            });
+        });
+
+        function generateTable(itemId) {
+            // 假设你有一个全局的evaluation_items对象
+            const selectedItem = evaluation_items.find(item => item.id == itemId);
+            if (!selectedItem) {
+                alert('Warning: Selected item not found!');
+                return;
+            }else{
+                alert('Warning: Selected item founded!');
+                return;
+            }
+
+            // 清空之前的表格
+            tableContainer.innerHTML = '';
+
+            // 创建表格
+            const table = document.createElement('table');
+            table.classList.add('table');
+
+            // 创建表头
+            const thead = document.createElement('thead');
+            const headerRow = document.createElement('tr');
+            selectedItem.dimensions.forEach(dimension => {
+                const th = document.createElement('th');
+                th.textContent = dimension;
+                headerRow.appendChild(th);
+            });
+            thead.appendChild(headerRow);
+            table.appendChild(thead);
+
+            // 创建表体
+            const tbody = document.createElement('tbody');
+            selectedItem.classes.forEach(className => {
+                const row = document.createElement('tr');
+                selectedItem.dimensions.forEach(() => {
+                    const td = document.createElement('td');
+                    td.textContent = className;
+                    row.appendChild(td);
+                });
+                tbody.appendChild(row);
+            });
+            table.appendChild(tbody);
+
+            // 将表格添加到容器中
+            tableContainer.appendChild(table);
+        }
+    });
+
+    
+</script>
+
+  <script>
+    var modal = document.getElementById("myModal");
+    var span = document.getElementsByClassName("close")[0];
+    var evaluateLinks = document.getElementsByClassName("evaluate-link");
+
+    for (var i = 0; i < evaluateLinks.length; i++) {
+      evaluateLinks[i].onclick = function() {
+        modal.style.display = "block";
+      }
+    }
+
+    span.onclick = function() {
+      modal.style.display = "none";
+    }
+
+    window.onclick = function(event) {
+      if (event.target == modal) {
+        modal.style.display = "none";
+      }
+    }
+  </script>
 
 {% endblock %}
