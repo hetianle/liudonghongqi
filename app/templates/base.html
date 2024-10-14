@@ -180,32 +180,6 @@
         }
     });
 
-    $(document).ready(function() {
-
-        $("#sidebar-collapse").mCustomScrollbar({
-            theme: "minimal"
-        });
-    
-        $('#dismiss, .overlay').on('click', function() {
-            $('#sidebar').removeClass('active');
-            $('.overlay').removeClass('active');
-        });
-    
-        $('#sidebar-collapse').on('click', function() {
-            $('#sidebar').addClass('active');
-            $('.overlay').addClass('active');
-            $('.collapse.in').toggleClass('in');
-            $('a[aria-expanded=true]').attr('aria-expanded', 'false');
-        });
-    
-        // Add event listener to collapse sidebar when clicking outside of it
-        $(document).on('click', function(event) {
-            if (!$(event.target).closest('#sidebar, #sidebar-collapse').length) {
-                $('#sidebar').removeClass('active');
-                $('.overlay').removeClass('active');
-            }
-        });
-    });
 </script>
 
 <nav class="navbar navbar-default">

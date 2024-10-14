@@ -29,6 +29,13 @@ class User(db.Model):
 
     def __repr__(self):
         return self.user
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'user': self.user,
+            'identity': self.identity,
+        }
 
 # class ClassName(db.Model):
 #     id = db.Column(db.Integer, primary_key = True)
@@ -43,6 +50,11 @@ class ClassName(db.Model):
     #     return self.name
     def __repr__(self):
         return self.name
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+        }
 
 
 # Association table for the many-to-many relationship between EvaluationItem and User (evaluators)
@@ -78,9 +90,16 @@ class EvaluationItem(db.Model):
             'id': self.id,
             'name': self.name,
             'dimensions': [dimension.to_dict() for dimension in self.dimensions],
+            'evaluate_classes': [class_.to_dict() for class_ in self.evaluate_classes],
+            'evaluators': [evaluator.to_dict() for evaluator in self.evaluators],
+            'start_date': self.start_date.isoformat(),
+            'end_date': self.end_date.isoformat(),
+            'loop_rule': self.loop_rule,
+            'admin_user': self.admin_user.to_dict(),
+            # Add other fields as necessary
         }
-    
-    
+        
+        
 class EvaluationDimension(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
